@@ -16,12 +16,21 @@ impl P3File {
             Err(why) => panic!("couldn't open {}: {}", path.display(), why),
             Ok(file) => file,
         };
-        P3File {file, width, height, max_value}
+        P3File {
+            file,
+            width,
+            height,
+            max_value,
+        }
     }
 
     /// Writes the P3 header to the P3 file
     pub fn write_header(&mut self) -> std::io::Result<()> {
-        Ok(write!(self.file, "P3\n{} {}\n{}\n", self.width, self.height, self.max_value)?)
+        Ok(write!(
+            self.file,
+            "P3\n{} {}\n{}\n",
+            self.width, self.height, self.max_value
+        )?)
     }
 
     /// Writes the color given to the P3 file

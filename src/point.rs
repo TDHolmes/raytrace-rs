@@ -20,5 +20,4 @@ impl Point for Point3d {
     fn z(&self) -> f32 {
         self.2
     }
-
 }

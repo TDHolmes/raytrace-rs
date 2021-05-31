@@ -1,6 +1,15 @@
 use std::path::Path;
 
-use raytracing::{circle::Circle, color::Color3d, hit::{Hittable, HitList}, p3, point::Point3d, prelude::*, ray::Ray, vec::Vec3d};
+use raytracing::{
+    circle::Circle,
+    color::Color3d,
+    hit::{HitList, Hittable},
+    p3,
+    point::Point3d,
+    prelude::*,
+    ray::Ray,
+    vec::Vec3d,
+};
 
 const ASPECT_RATIO: f32 = 16. / 9.;
 const IMAGE_HEIGHT: usize = 400;
@@ -24,16 +33,8 @@ fn main() {
 
     // World
     let mut hitlist = HitList::new();
-    hitlist.add(
-        Box::new(
-            Circle::new(100.,Point3d::new(0.,-100.5,-1.))
-        )
-    );
-    hitlist.add(
-        Box::new(
-            Circle::new(0.5, Point3d::new(0., 0., -1.))
-        )
-    );
+    hitlist.add(Box::new(Circle::new(100., Point3d::new(0., -100.5, -1.))));
+    hitlist.add(Box::new(Circle::new(0.5, Point3d::new(0., 0., -1.))));
 
     // Camera
     let viewport_height = 2.0;
@@ -43,7 +44,8 @@ fn main() {
     let origin = Point3d::new(0., 0., 0.);
     let horizontal = Vec3d::new(viewport_width, 0., 0.);
     let vertical = Vec3d::new(0., viewport_height, 0.);
-    let lower_left_corner = origin - horizontal/2. - vertical/2. - Vec3d::new(0., 0., focal_length);
+    let lower_left_corner =
+        origin - horizontal / 2. - vertical / 2. - Vec3d::new(0., 0., focal_length);
 
     // render the scene
     for y in (0..IMAGE_HEIGHT).rev() {

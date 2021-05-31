@@ -1,8 +1,4 @@
-use super::{
-    point::Point3d,
-    vec::Vec3d,
-    ray::Ray,
-};
+use super::{point::Point3d, ray::Ray, vec::Vec3d};
 
 pub struct Hit {
     pub point: Point3d,
@@ -52,11 +48,10 @@ pub struct HitList {
     hittable_objects: Vec<Box<dyn PrintableHittable>>,
 }
 
-
 impl HitList {
     pub fn new() -> HitList {
         HitList {
-            hittable_objects: vec![]
+            hittable_objects: vec![],
         }
     }
 
@@ -66,7 +61,6 @@ impl HitList {
 }
 
 impl Hittable for HitList {
-
     fn hit(&self, ray: &Ray, time_min: f32, time_max: f32) -> Option<Hit> {
         // let mut closest_hit_time: f32 = time_max;
         let mut hit: Option<Hit> = None;

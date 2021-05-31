@@ -1,6 +1,6 @@
 //! Implements a simple 3d vector to represent a point. also used for color.
-use std::{default, ops};
 use std::fmt::{Debug, Formatter, Result};
+use std::{default, ops};
 
 #[derive(Copy, Clone)]
 pub struct Vec3d(pub f32, pub f32, pub f32);
@@ -25,16 +25,14 @@ impl Vec3d {
     }
 
     pub fn dot(&self, v: &Vec3d) -> f32 {
-        return self.0 * v.0
-             + self.1 * v.1
-             + self.2 * v.2;
+        return self.0 * v.0 + self.1 * v.1 + self.2 * v.2;
     }
 
     pub fn cross(&self, v: &Vec3d) -> Vec3d {
         return Vec3d::new(
             self.1 * v.2 - self.2 * v.1,
             self.2 * v.0 - self.0 * v.2,
-            self.0 * v.1 - self.1 * v.0
+            self.0 * v.1 - self.1 * v.0,
         );
     }
 
@@ -45,7 +43,7 @@ impl Vec3d {
 
 impl default::Default for Vec3d {
     fn default() -> Self {
-        Vec3d::new(0.,0.,0.)
+        Vec3d::new(0., 0., 0.)
     }
 }
 

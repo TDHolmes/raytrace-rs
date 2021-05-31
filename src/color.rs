@@ -20,5 +20,4 @@ impl Color for Color3d {
     fn blue(&self) -> f32 {
         self.2
     }
-
 }

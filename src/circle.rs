@@ -1,7 +1,7 @@
 use crate::{
+    hit::{Hit, Hittable, PrintableHittable},
     point::Point3d,
     ray::Ray,
-    hit::{Hit, Hittable, PrintableHittable},
 };
 
 pub struct Circle {
@@ -9,12 +9,9 @@ pub struct Circle {
     pub origin: Point3d,
 }
 
-
 impl Circle {
     pub fn new(radius: f32, origin: Point3d) -> Circle {
-        Circle {
-            radius, origin
-        }
+        Circle { radius, origin }
     }
 }
 
@@ -24,9 +21,9 @@ impl Hittable for Circle {
         let a = ray.direction.dot(&ray.direction);
         let b = 2.0 * oc.dot(&ray.direction);
         let c = oc.dot(&oc) - self.radius * self.radius;
-        let discriminant = b*b - 4. * a * c;
+        let discriminant = b * b - 4. * a * c;
 
-        if  discriminant >= 0. {
+        if discriminant >= 0. {
             let root = (-b - discriminant.sqrt()) / (2. * a);
             if root >= time_min && root <= time_max {
                 let hit_point = ray.at(root);
