@@ -1,20 +1,22 @@
-use super::{point::Point3d, ray::Ray, vec::Vec3d};
+use super::{material::Material, point::Point3d, ray::Ray, vec::Vec3d};
 
 pub struct Hit {
     pub point: Point3d,
     pub normal: Vec3d,
     pub time: f32,
     pub front_face: bool,
+    pub material: &'static dyn Material,
 }
 
 impl Hit {
-    pub fn new(ray: &Ray, time: f32, normal: &Vec3d) -> Hit {
+    pub fn new(ray: &Ray, time: f32, normal: &Vec3d, material: &'static dyn Material) -> Hit {
         let point = ray.at(time);
         let mut hit = Hit {
             time,
             point,
             normal: *normal,
             front_face: false,
+            material,
         };
         hit.set_face_normal(ray);
 

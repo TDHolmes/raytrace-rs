@@ -22,3 +22,9 @@ impl Ray {
         self.origin + self.direction * time
     }
 }
+
+impl Default for Ray {
+    fn default() -> Self {
+        Ray::new(Point3d::new(0., 0., 0.), Vec3d::new(1., 0., 0.))
+    }
+}

@@ -2,6 +2,7 @@ pub mod camera;
 pub mod circle;
 pub mod color;
 pub mod hit;
+pub mod material;
 pub mod p3;
 pub mod point;
 pub mod prelude;

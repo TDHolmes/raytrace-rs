@@ -1,5 +1,6 @@
 use crate::{
     hit::{Hit, Hittable, PrintableHittable},
+    material::Material,
     point::Point3d,
     ray::Ray,
 };
@@ -7,11 +8,16 @@ use crate::{
 pub struct Circle {
     pub radius: f32,
     pub origin: Point3d,
+    material: &'static dyn Material,
 }
 
 impl Circle {
-    pub fn new(radius: f32, origin: Point3d) -> Circle {
-        Circle { radius, origin }
+    pub fn new(radius: f32, origin: Point3d, material: &'static dyn Material) -> Circle {
+        Circle {
+            radius,
+            origin,
+            material,
+        }
     }
 }
 
@@ -28,7 +34,7 @@ impl Hittable for Circle {
             if root >= time_min && root <= time_max {
                 let hit_point = ray.at(root);
                 let normal = (hit_point - self.origin) / self.radius;
-                return Some(Hit::new(&ray, root, &normal));
+                return Some(Hit::new(&ray, root, &normal, self.material));
             }
         }
 

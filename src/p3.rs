@@ -34,7 +34,12 @@ impl P3File {
     }
 
     /// Writes the color given to the P3 file
-    pub fn write_color(&mut self, color: &Color3d) -> std::io::Result<()> {
+    pub fn write_color(&mut self, mut color: Color3d) -> std::io::Result<()> {
+        // Divide the color by the number of samples and gamma-correct for gamma=2.0.
+        color.0 = f32::sqrt(color.0);
+        color.1 = f32::sqrt(color.1);
+        color.2 = f32::sqrt(color.2);
+
         Ok(write!(
             self.file,
             "{} {} {}\n",

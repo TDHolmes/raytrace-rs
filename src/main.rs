@@ -7,20 +7,45 @@ use raytracing::{
     circle::Circle,
     color::Color3d,
     hit::{HitList, Hittable},
-    p3,
+    material, p3,
     point::Point3d,
     prelude::*,
     ray::Ray,
     vec::Vec3d,
 };
 
+// constants
+
 const IMAGE_HEIGHT: usize = 400;
 const IMAGE_WIDTH: usize = (IMAGE_HEIGHT as f32 * ASPECT_RATIO) as usize;
 const SAMPLES_PER_PIXEL: usize = 100;
+const RECURSION_LIMIT: usize = 10;
 
-pub fn ray_color(ray: &Ray, world: &dyn Hittable) -> Color3d {
-    if let Some(hit) = world.hit(ray, 0., f32::INFINITY) {
-        return 0.5 * (hit.normal + Color3d::new(1., 1., 1.));
+// Materials
+
+// const DULL_METAL: material::Metal = material::Metal::new(Color3d::new(0.5, 0.5, 0.5));
+const SHINY_METAL: material::Metal = material::Metal::new(Color3d::new(0.95, 0.95, 0.95));
+const LIGHT_GREEN: material::Lambertian = material::Lambertian::new(Color3d::new(0., 0.4, 0.));
+const BRIGHT_BLUE: material::Lambertian = material::Lambertian::new(Color3d::new(0., 0., 0.97));
+
+pub fn ray_color(ray: &Ray, world: &dyn Hittable, recursion_depth: usize) -> Color3d {
+    // don't scatter forever
+    if recursion_depth == 0 {
+        return Color3d::new(0., 0., 0.);
+    }
+
+    if let Some(hit) = world.hit(ray, 0.001, f32::INFINITY) {
+        // Difuse material - scatter and send off
+        let mut scattered: Ray = Default::default();
+        let mut attenuation: Color3d = Default::default();
+
+        // scatter on the material, then go to next material.
+        hit.material
+            .scatter(ray, &hit, &mut attenuation, &mut scattered);
+        if attenuation.near_zero() {
+            return Color3d::new(0., 0., 0.);
+        }
+        return attenuation * ray_color(&scattered, world, recursion_depth - 1);
     }
 
     let unit_direction: Vec3d = ray.direction.unit_vector();
@@ -36,8 +61,21 @@ fn main() {
 
     // World
     let mut hitlist = HitList::new();
-    hitlist.add(Box::new(Circle::new(100., Point3d::new(0., -100.5, -1.))));
-    hitlist.add(Box::new(Circle::new(0.5, Point3d::new(0., 0., -1.))));
+    hitlist.add(Box::new(Circle::new(
+        100.,
+        Point3d::new(0., -100.5, -1.),
+        &LIGHT_GREEN,
+    )));
+    hitlist.add(Box::new(Circle::new(
+        0.5,
+        Point3d::new(-1., 0., -1.),
+        &SHINY_METAL,
+    )));
+    hitlist.add(Box::new(Circle::new(
+        0.5,
+        Point3d::new(1., 0., -1.),
+        &BRIGHT_BLUE,
+    )));
 
     // Camera
     let camera = Camera::new();
@@ -54,12 +92,12 @@ fn main() {
                 let u = (x as f32 + rng.gen::<f32>()) / (IMAGE_WIDTH - 1) as f32;
                 let r = camera.get_ray(u, v);
 
-                let sub_pixel_color = ray_color(&r, &hitlist);
+                let sub_pixel_color = ray_color(&r, &hitlist, RECURSION_LIMIT);
                 pixel_color = pixel_color + sub_pixel_color;
             }
 
             pixel_color = pixel_color / SAMPLES_PER_PIXEL as f32;
-            p3.write_color(&pixel_color).unwrap();
+            p3.write_color(pixel_color).unwrap();
         }
     }
 }
