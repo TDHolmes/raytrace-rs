@@ -1,6 +1,7 @@
 use std::path::Path;
 
 use raytracing::{
+    camera::{Camera, ASPECT_RATIO},
     circle::Circle,
     color::Color3d,
     hit::{HitList, Hittable},
@@ -11,7 +12,6 @@ use raytracing::{
     vec::Vec3d,
 };
 
-const ASPECT_RATIO: f32 = 16. / 9.;
 const IMAGE_HEIGHT: usize = 400;
 const IMAGE_WIDTH: usize = (IMAGE_HEIGHT as f32 * ASPECT_RATIO) as usize;
 
@@ -37,22 +37,15 @@ fn main() {
     hitlist.add(Box::new(Circle::new(0.5, Point3d::new(0., 0., -1.))));
 
     // Camera
-    let viewport_height = 2.0;
-    let viewport_width = ASPECT_RATIO * viewport_height;
-    let focal_length = 1.0;
-
-    let origin = Point3d::new(0., 0., 0.);
-    let horizontal = Vec3d::new(viewport_width, 0., 0.);
-    let vertical = Vec3d::new(0., viewport_height, 0.);
-    let lower_left_corner =
-        origin - horizontal / 2. - vertical / 2. - Vec3d::new(0., 0., focal_length);
+    let camera = Camera::new();
 
     // render the scene
     for y in (0..IMAGE_HEIGHT).rev() {
         for x in 0..IMAGE_WIDTH {
             let u = (x as f32) / (IMAGE_WIDTH - 1) as f32;
             let v = (y as f32) / (IMAGE_HEIGHT - 1) as f32;
-            let r: Ray = Ray::new(origin, lower_left_corner + u * horizontal + v * vertical);
+            let r = camera.get_ray(u, v);
+
             let pixel_color = ray_color(&r, &hitlist);
             p3.write_color(&pixel_color).unwrap();
         }

@@ -1,3 +1,4 @@
+pub mod camera;
 pub mod circle;
 pub mod color;
 pub mod hit;
