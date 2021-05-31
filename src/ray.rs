@@ -1,3 +1,5 @@
+use std::fmt::{Debug, Formatter, Result};
+
 use super::{point::Point3d, vec::Vec3d};
 
 pub struct Ray {
@@ -5,8 +7,18 @@ pub struct Ray {
     pub direction: Vec3d,
 }
 
+impl Debug for Ray {
+    fn fmt(&self, f: &mut Formatter<'_>) -> Result {
+        write!(f, "Ray<{:?} -> {:?}>", self.origin, self.direction)
+    }
+}
+
 impl Ray {
-    pub fn at(&self, time: usize) -> Point3d {
-        self.origin + self.direction * time as f32
+    pub fn new(origin: Point3d, direction: Vec3d) -> Ray {
+        Ray { origin, direction }
+    }
+
+    pub fn at(&self, time: f32) -> Point3d {
+        self.origin + self.direction * time
     }
 }

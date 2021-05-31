@@ -1,8 +1,15 @@
 //! Implements a simple 3d vector to represent a point. also used for color.
-use std::ops;
+use std::{default, ops};
+use std::fmt::{Debug, Formatter, Result};
 
 #[derive(Copy, Clone)]
 pub struct Vec3d(pub f32, pub f32, pub f32);
+
+impl Debug for Vec3d {
+    fn fmt(&self, f: &mut Formatter<'_>) -> Result {
+        write!(f, "<{:0.3}, {:0.3}, {:0.3}>", self.0, self.1, self.2)
+    }
+}
 
 impl Vec3d {
     pub fn new(x: f32, y: f32, z: f32) -> Vec3d {
@@ -33,6 +40,12 @@ impl Vec3d {
 
     pub fn unit_vector(self) -> Vec3d {
         return self / self.length();
+    }
+}
+
+impl default::Default for Vec3d {
+    fn default() -> Self {
+        Vec3d::new(0.,0.,0.)
     }
 }
 
@@ -67,5 +80,29 @@ impl ops::Div<f32> for Vec3d {
 
     fn div(self, rhs: f32) -> Self {
         Vec3d::new(self.0 / rhs, self.1 / rhs, self.2 / rhs)
+    }
+}
+
+impl ops::Mul<Vec3d> for f32 {
+    type Output = Vec3d;
+
+    fn mul(self, rhs: Vec3d) -> Vec3d {
+        rhs * self
+    }
+}
+
+impl ops::Div<Vec3d> for f32 {
+    type Output = Vec3d;
+
+    fn div(self, rhs: Vec3d) -> Vec3d {
+        Vec3d::new(self / rhs.0, self / rhs.1, self / rhs.2)
+    }
+}
+
+impl ops::Neg for Vec3d {
+    type Output = Vec3d;
+
+    fn neg(self) -> Self::Output {
+        Vec3d::new(-self.0, -self.1, -self.2)
     }
 }

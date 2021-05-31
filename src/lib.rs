@@ -4,3 +4,5 @@ pub mod point;
 pub mod prelude;
 pub mod ray;
 pub mod vec;
+pub mod hit;
+pub mod circle;

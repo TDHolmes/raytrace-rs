@@ -1,43 +1,58 @@
-use std::fs::File;
 use std::path::Path;
 
-use raytracing::prelude::*;
-use raytracing::{color::Color3d, p3, ray::Ray, vec::Vec3d};  // point::Point3d
+use raytracing::{circle::Circle, color::Color3d, hit::{Hittable, HitList}, p3, point::Point3d, prelude::*, ray::Ray, vec::Vec3d};
 
-const ASPECT_RATIO: f64 = 16. / 9.;
+const ASPECT_RATIO: f32 = 16. / 9.;
 const IMAGE_HEIGHT: usize = 400;
-const IMAGE_WIDTH: usize = (IMAGE_HEIGHT as f64 * ASPECT_RATIO) as usize;
+const IMAGE_WIDTH: usize = (IMAGE_HEIGHT as f32 * ASPECT_RATIO) as usize;
 
-pub fn ray_color(ray: &Ray) -> Color3d {
+pub fn ray_color(ray: &Ray, world: &dyn Hittable) -> Color3d {
+    if let Some(hit) = world.hit(ray, 0., f32::INFINITY) {
+        return 0.5 * (hit.normal + Color3d::new(1., 1., 1.));
+    }
+
     let unit_direction: Vec3d = ray.direction.unit_vector();
     let t = 0.5 * (unit_direction.y() + 1.0);
-    return  Color3d::new(1.0, 1.0, 1.0) * (1.0 - t) + Color3d::new(0.5, 0.7, 1.0) * t;
+    return (1.0 - t) * Color3d::new(1.0, 1.0, 1.0) + t * Color3d::new(0.5, 0.7, 1.0);
 }
 
 fn main() {
-    // Create a path to the desired file
+    // Create our image file
     let path = Path::new("hello.ppm");
-    let display = path.display();
+    let mut p3 = p3::P3File::new(path, IMAGE_WIDTH, IMAGE_HEIGHT, 255);
+    p3.write_header().unwrap();
 
-    // Open a new file for writing
-    let mut file = match File::create(&path) {
-        Err(why) => panic!("couldn't open {}: {}", display, why),
-        Ok(file) => file,
-    };
+    // World
+    let mut hitlist = HitList::new();
+    hitlist.add(
+        Box::new(
+            Circle::new(100.,Point3d::new(0.,-100.5,-1.))
+        )
+    );
+    hitlist.add(
+        Box::new(
+            Circle::new(0.5, Point3d::new(0., 0., -1.))
+        )
+    );
 
-    // write the file header
-    p3::write_header(&mut file, IMAGE_WIDTH, IMAGE_HEIGHT).unwrap();
+    // Camera
+    let viewport_height = 2.0;
+    let viewport_width = ASPECT_RATIO * viewport_height;
+    let focal_length = 1.0;
 
-    // fill in a dummy color
-    for y in 0..IMAGE_HEIGHT {
+    let origin = Point3d::new(0., 0., 0.);
+    let horizontal = Vec3d::new(viewport_width, 0., 0.);
+    let vertical = Vec3d::new(0., viewport_height, 0.);
+    let lower_left_corner = origin - horizontal/2. - vertical/2. - Vec3d::new(0., 0., focal_length);
+
+    // render the scene
+    for y in (0..IMAGE_HEIGHT).rev() {
         for x in 0..IMAGE_WIDTH {
-            let mut color = Color3d::new(
-                x as f32 / IMAGE_WIDTH as f32,
-                y as f32 / IMAGE_HEIGHT as f32,
-                0.25,
-            );
-            color = color * 256.0_f32;
-            p3::write_color(&mut file, &color).unwrap();
+            let u = (x as f32) / (IMAGE_WIDTH - 1) as f32;
+            let v = (y as f32) / (IMAGE_HEIGHT - 1) as f32;
+            let r: Ray = Ray::new(origin, lower_left_corner + u * horizontal + v * vertical);
+            let pixel_color = ray_color(&r, &hitlist);
+            p3.write_color(&pixel_color).unwrap();
         }
     }
 }
