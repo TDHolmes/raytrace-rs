@@ -30,17 +30,23 @@ impl Material for Lambertian {
 
 pub struct Metal {
     pub albedo: Color3d,
+    fuzziness: f32,
 }
 
 impl Metal {
-    pub const fn new(albedo: Color3d) -> Metal {
-        Metal { albedo }
+    pub const fn new(albedo: Color3d, mut fuzziness: f32) -> Metal {
+        // cast float to integer to work around const float arithmatic not being stable
+        if fuzziness as usize > 1 {
+            fuzziness = 1.;
+        }
+        Metal { albedo, fuzziness }
     }
 }
 
 impl Material for Metal {
     fn scatter(&self, r_in: &Ray, rec: &Hit, attenuation: &mut Color3d, scattered: &mut Ray) {
-        let reflected = r_in.direction.unit_vector().reflect(&rec.normal);
+        let reflected = r_in.direction.unit_vector().reflect(&rec.normal)
+            + self.fuzziness * Vec3d::random_in_unit_sphere();
         *scattered = Ray::new(rec.point, reflected);
         *attenuation = self.albedo;
 

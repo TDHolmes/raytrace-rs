@@ -23,8 +23,8 @@ const RECURSION_LIMIT: usize = 10;
 
 // Materials
 
-// const DULL_METAL: material::Metal = material::Metal::new(Color3d::new(0.5, 0.5, 0.5));
-const SHINY_METAL: material::Metal = material::Metal::new(Color3d::new(0.95, 0.95, 0.95));
+const DULL_METAL: material::Metal = material::Metal::new(Color3d::new(0.5, 0.5, 0.5), 0.8);
+const SHINY_METAL: material::Metal = material::Metal::new(Color3d::new(0.95, 0.95, 0.95), 0.2);
 const LIGHT_GREEN: material::Lambertian = material::Lambertian::new(Color3d::new(0., 0.4, 0.));
 const BRIGHT_BLUE: material::Lambertian = material::Lambertian::new(Color3d::new(0., 0., 0.97));
 
@@ -48,6 +48,7 @@ pub fn ray_color(ray: &Ray, world: &dyn Hittable, recursion_depth: usize) -> Col
         return attenuation * ray_color(&scattered, world, recursion_depth - 1);
     }
 
+    // Background
     let unit_direction: Vec3d = ray.direction.unit_vector();
     let t = 0.5 * (unit_direction.y() + 1.0);
     return (1.0 - t) * Color3d::new(1.0, 1.0, 1.0) + t * Color3d::new(0.5, 0.7, 1.0);
@@ -68,13 +69,18 @@ fn main() {
     )));
     hitlist.add(Box::new(Circle::new(
         0.5,
+        Point3d::new(0., 0., -1.),
+        &BRIGHT_BLUE,
+    )));
+    hitlist.add(Box::new(Circle::new(
+        0.5,
         Point3d::new(-1., 0., -1.),
         &SHINY_METAL,
     )));
     hitlist.add(Box::new(Circle::new(
         0.5,
         Point3d::new(1., 0., -1.),
-        &BRIGHT_BLUE,
+        &DULL_METAL,
     )));
 
     // Camera
