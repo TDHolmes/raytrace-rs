@@ -1,7 +1,5 @@
 use std::path::Path;
 
-use rand::prelude::*;
-
 use raytracing::{
     camera::{Camera, ASPECT_RATIO},
     circle::Circle,
@@ -86,16 +84,14 @@ fn main() {
     // Camera
     let camera = Camera::new();
 
-    let mut rng = rand::thread_rng();
-
     // render the scene
     for y in (0..IMAGE_HEIGHT).rev() {
         for x in 0..IMAGE_WIDTH {
             // anti-aliasing
             let mut pixel_color: Color3d = Color3d::new(0., 0., 0.);
             for _ in 0..SAMPLES_PER_PIXEL {
-                let v = (y as f32 + rng.gen::<f32>()) / (IMAGE_HEIGHT - 1) as f32;
-                let u = (x as f32 + rng.gen::<f32>()) / (IMAGE_WIDTH - 1) as f32;
+                let v = (y as f32 + fastrand::f32()) / (IMAGE_HEIGHT - 1) as f32;
+                let u = (x as f32 + fastrand::f32()) / (IMAGE_WIDTH - 1) as f32;
                 let r = camera.get_ray(u, v);
 
                 let sub_pixel_color = ray_color(&r, &hitlist, RECURSION_LIMIT);

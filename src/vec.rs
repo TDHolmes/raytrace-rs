@@ -17,14 +17,14 @@ impl Vec3d {
     }
 
     pub fn random() -> Vec3d {
-        return Vec3d::new(rand::random(), rand::random(), rand::random());
+        return Vec3d::new(fastrand::f32(), fastrand::f32(), fastrand::f32());
     }
 
     pub fn random_in_range(min: f32, max: f32) -> Vec3d {
         return Vec3d::new(
-            rand::random::<f32>() * max + min,
-            rand::random::<f32>() * max + min,
-            rand::random::<f32>() * max + min,
+            fastrand::f32() * max + min,
+            fastrand::f32() * max + min,
+            fastrand::f32() * max + min,
         );
     }
 
