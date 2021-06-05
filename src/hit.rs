@@ -64,13 +64,13 @@ impl HitList {
 
 impl Hittable for HitList {
     fn hit(&self, ray: &Ray, time_min: f32, time_max: f32) -> Option<Hit> {
-        // let mut closest_hit_time: f32 = time_max;
+        let mut closest_hit_time: f32 = time_max;
         let mut hit: Option<Hit> = None;
 
         for object in &self.hittable_objects {
-            if let Some(this_hit) = object.hit(ray, time_min, time_max) {
+            if let Some(this_hit) = object.hit(ray, time_min, closest_hit_time) {
+                closest_hit_time = this_hit.time;
                 hit = Some(this_hit);
-                // println!("\t{:?} is hittable @ {:?}", object, hit);
             }
         }
 
