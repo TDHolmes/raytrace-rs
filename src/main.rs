@@ -16,8 +16,8 @@ use raytracing::{
 
 const IMAGE_HEIGHT: usize = 400;
 const IMAGE_WIDTH: usize = (IMAGE_HEIGHT as f32 * ASPECT_RATIO) as usize;
-const SAMPLES_PER_PIXEL: usize = 100;
-const RECURSION_LIMIT: usize = 10;
+const SAMPLES_PER_PIXEL: usize = 50;
+const RECURSION_LIMIT: usize = 5;
 
 // Materials
 
