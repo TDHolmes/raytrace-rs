@@ -2,3 +2,4 @@
 /target
 *.svg
 Cargo.lock
+*.DS_Store
