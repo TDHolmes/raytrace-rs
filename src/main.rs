@@ -21,11 +21,12 @@ const RECURSION_LIMIT: usize = 5;
 
 // Materials
 
-const DULL_METAL: material::Metal = material::Metal::new(Color3d::new(0.5, 0.5, 0.5), 0.8);
-const SHINY_METAL: material::Metal = material::Metal::new(Color3d::new(0.95, 0.95, 0.95), 0.2);
-const LIGHT_GREEN: material::Lambertian = material::Lambertian::new(Color3d::new(0., 0.4, 0.));
-const BRIGHT_BLUE: material::Lambertian = material::Lambertian::new(Color3d::new(0., 0., 0.97));
-const GLASS: material::Dialectric = material::Dialectric::new(1.5);
+const MATERIAL_GROUND: material::Lambertian =
+    material::Lambertian::new(Color3d::new(0.8, 0.8, 0.0));
+const MATERIAL_CENTER: material::Lambertian =
+    material::Lambertian::new(Color3d::new(0.1, 0.2, 0.5));
+const MATERIAL_LEFT: material::Dialectric = material::Dialectric::new(1.5);
+const MATERIAL_RIGHT: material::Metal = material::Metal::new(Color3d::new(0.8, 0.6, 0.2), 0.0);
 
 pub fn ray_color(ray: &Ray, world: &dyn Hittable, recursion_depth: usize) -> Color3d {
     // don't scatter forever
@@ -64,22 +65,22 @@ fn main() {
     hitlist.add(Box::new(Circle::new(
         100.,
         Point3d::new(0., -100.5, -1.),
-        &LIGHT_GREEN,
+        &MATERIAL_GROUND,
     )));
     hitlist.add(Box::new(Circle::new(
         0.5,
         Point3d::new(0., 0., -1.),
-        &BRIGHT_BLUE,
+        &MATERIAL_CENTER,
     )));
     hitlist.add(Box::new(Circle::new(
         0.5,
         Point3d::new(-1., 0., -1.),
-        &GLASS,
+        &MATERIAL_LEFT,
     )));
     hitlist.add(Box::new(Circle::new(
         0.5,
         Point3d::new(1., 0., -1.),
-        &DULL_METAL,
+        &MATERIAL_RIGHT,
     )));
 
     // Camera

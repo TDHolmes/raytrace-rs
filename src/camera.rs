@@ -14,7 +14,7 @@ impl Camera {
         // Camera
         let viewport_height = 2.0;
         let viewport_width = ASPECT_RATIO * viewport_height;
-        let focal_length = 1.3;
+        let focal_length = 1.0;
 
         let origin = Point3d::new(0., 0., 0.);
         let horizontal = Vec3d::new(viewport_width, 0., 0.);
