@@ -25,6 +25,7 @@ const DULL_METAL: material::Metal = material::Metal::new(Color3d::new(0.5, 0.5, 
 const SHINY_METAL: material::Metal = material::Metal::new(Color3d::new(0.95, 0.95, 0.95), 0.2);
 const LIGHT_GREEN: material::Lambertian = material::Lambertian::new(Color3d::new(0., 0.4, 0.));
 const BRIGHT_BLUE: material::Lambertian = material::Lambertian::new(Color3d::new(0., 0., 0.97));
+const GLASS: material::Dialectric = material::Dialectric::new(1.5);
 
 pub fn ray_color(ray: &Ray, world: &dyn Hittable, recursion_depth: usize) -> Color3d {
     // don't scatter forever
@@ -73,7 +74,7 @@ fn main() {
     hitlist.add(Box::new(Circle::new(
         0.5,
         Point3d::new(-1., 0., -1.),
-        &SHINY_METAL,
+        &GLASS,
     )));
     hitlist.add(Box::new(Circle::new(
         0.5,
