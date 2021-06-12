@@ -1,2 +1,4 @@
 *.ppm
 /target
+*.svg
+Cargo.lock

@@ -25,7 +25,7 @@ impl Hittable for Circle {
     fn hit(&self, ray: &Ray, time_min: f32, time_max: f32) -> Option<Hit> {
         let oc = ray.origin - self.origin;
         let a = ray.direction.dot(&ray.direction);
-        let b = 2.0 * oc.dot(&ray.direction);
+        let b = 2. * oc.dot(&ray.direction);
         let c = oc.dot(&oc) - self.radius * self.radius;
         let discriminant = b * b - 4. * a * c;
 
