@@ -1,7 +1,7 @@
 use std::path::Path;
 
 use raytracing::{
-    camera::{Camera, ASPECT_RATIO},
+    camera::{self, Camera},
     circle::Circle,
     color::Color3d,
     hit::{HitList, Hittable},
@@ -18,6 +18,8 @@ const IMAGE_HEIGHT: usize = 400;
 const IMAGE_WIDTH: usize = (IMAGE_HEIGHT as f32 * ASPECT_RATIO) as usize;
 const SAMPLES_PER_PIXEL: usize = 50;
 const RECURSION_LIMIT: usize = 5;
+
+const ASPECT_RATIO: f32 = 16. / 9.;
 
 // Materials
 
@@ -84,7 +86,13 @@ fn main() {
     )));
 
     // Camera
-    let camera = Camera::new();
+    let camera = Camera::new(
+        Point3d::new(-2., 2., 1.),
+        Point3d::new(0., 0., -1.),
+        Vec3d::new(0., 1., 0.),
+        camera::Degrees::new(90.),
+        ASPECT_RATIO,
+    );
 
     // render the scene
     for y in (0..IMAGE_HEIGHT).rev() {
