@@ -1,4 +1,8 @@
-use super::{point::Point3d, ray::Ray, vec::Vec3d};
+use super::{
+    point::{Point, Point3d},
+    ray::Ray,
+    vec::Vec3d,
+};
 
 #[derive(Debug, PartialEq)]
 pub struct Degrees(f32);
@@ -51,6 +55,8 @@ pub struct Camera {
     lower_left_corner: Point3d,
     horizontal: Vec3d,
     vertical: Vec3d,
+    camera_plane: (Vec3d, Vec3d, Vec3d),
+    lens_radius: f32,
 }
 
 impl Camera {
@@ -60,6 +66,8 @@ impl Camera {
         vup: Vec3d,
         vert_fov: Degrees,
         aspect_ratio: f32,
+        aperature: f32,
+        focus_distance: f32,
     ) -> Camera {
         // Camera
         let theta: Radians = vert_fov.into();
@@ -72,22 +80,27 @@ impl Camera {
         let v = Vec3d::cross(&w, &u);
 
         let origin = lookfrom;
-        let horizontal = viewport_width * u;
-        let vertical = viewport_height * v;
-        let lower_left_corner = origin - horizontal / 2. - vertical / 2. - w;
+        let horizontal = focus_distance * viewport_width * u;
+        let vertical = focus_distance * viewport_height * v;
+        let lower_left_corner = origin - horizontal / 2. - vertical / 2. - focus_distance * w;
 
         Camera {
             origin,
             lower_left_corner,
             horizontal,
             vertical,
+            camera_plane: (u, w, v),
+            lens_radius: aperature / 2.,
         }
     }
 
     pub fn get_ray(&self, s: f32, t: f32) -> Ray {
+        let rd = self.lens_radius * Vec3d::random_in_unit_disk();
+        let offset = self.camera_plane.0 * rd.x() + self.camera_plane.2 * rd.y();
+
         return Ray::new(
-            self.origin,
-            self.lower_left_corner + s * self.horizontal + t * self.vertical - self.origin,
+            self.origin + offset,
+            self.lower_left_corner + s * self.horizontal + t * self.vertical - self.origin - offset,
         );
     }
 }

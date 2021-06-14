@@ -37,6 +37,17 @@ impl Vec3d {
         }
     }
 
+    pub fn random_in_unit_disk() -> Vec3d {
+        loop {
+            let x = fastrand::f32() * 2. - 1.;
+            let y = fastrand::f32() * 2. - 1.;
+            let p = Vec3d::new(x, y, 0.);
+            if p.length_squared() < 1. {
+                return p;
+            }
+        }
+    }
+
     pub fn random_unit_vector() -> Vec3d {
         Vec3d::random_in_unit_sphere().unit_vector()
     }

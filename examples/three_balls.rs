@@ -86,12 +86,20 @@ fn main() {
     )));
 
     // Camera
+    let lookfrom = Point3d::new(3., 3., 2.);
+    let lookat = Point3d::new(0., 0., -1.);
+    let vup = Vec3d::new(0., 1., 0.);
+    let dist_to_focus = (lookfrom - lookat).length();
+    let aperture = 1.0;
+
     let camera = Camera::new(
-        Point3d::new(-2., 2., 1.),
-        Point3d::new(0., 0., -1.),
-        Vec3d::new(0., 1., 0.),
+        lookfrom,
+        lookat,
+        vup,
         camera::Degrees::new(90.),
         ASPECT_RATIO,
+        aperture,
+        dist_to_focus,
     );
 
     // render the scene
